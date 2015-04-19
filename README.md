@@ -1,2 +1,2 @@
-# battleship
+# battleship - socket:
 battleship game
