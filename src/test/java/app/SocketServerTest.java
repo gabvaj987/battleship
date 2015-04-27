@@ -23,4 +23,13 @@ public class SocketServerTest {
         // THEN
         assertEquals(response, Result.TERMINATE);
     }
+    
+    @Test
+    public void testAcceptHelloContinues() {
+        // GIVEN
+        // WHEN
+        Result response = underTest.accept("HELLO 10 20");
+        // THEN
+        assertEquals(response, Result.CONTINUE);
+    }
 }
