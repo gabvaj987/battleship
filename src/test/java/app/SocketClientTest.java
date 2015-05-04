@@ -7,12 +7,12 @@ import org.testng.annotations.Test;
 
 import app.SocketServer.Result;
 
-public class SocketServerTest {
-    private SocketServer underTest;
+public class SocketClientTest {
+    private SocketClient underTest;
 
     @BeforeMethod
     public void init() {
-        underTest = new SocketServer();
+        underTest = new SocketClient();
     }
 
     @Test
@@ -25,10 +25,10 @@ public class SocketServerTest {
     }
     
     @Test
-    public void testAcceptFireContinues() {
+    public void testAcceptHelloContinues() {
         // GIVEN
         // WHEN
-        Result response = underTest.accept("FIRE 5 10");
+        Result response = underTest.accept("HELLO 10 20");
         // THEN
         assertEquals(response, Result.CONTINUE);
     }
