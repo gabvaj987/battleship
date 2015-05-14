@@ -5,31 +5,32 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import socket.SocketServer.Result;
+import player.Client;
+import player.Result;
 
 public class SocketClientTest {
-    private SocketClient underTest;
+	private Client underTest;
 
-    @BeforeMethod
-    public void init() {
-        underTest = new SocketClient();
-    }
+	@BeforeMethod
+	public void init() {
+		underTest = new Client();
+	}
 
-    @Test
-    public void testAcceptErrorExits() {
-        // GIVEN
-        // WHEN
-        Result response = underTest.accept("ERROR You have already fired here");
-        // THEN
-        assertEquals(response, Result.TERMINATE);
-    }
-    
-    @Test
-    public void testAcceptHelloContinues() {
-        // GIVEN
-        // WHEN
-        Result response = underTest.accept("HELLO 10 20");
-        // THEN
-        assertEquals(response, Result.CONTINUE);
-    }
+	@Test
+	public void testAcceptErrorExits() {
+		// GIVEN
+		// WHEN
+		final Result response = underTest.accept("ERROR You have already fired here");
+		// THEN
+		assertEquals(response, Result.TERMINATE);
+	}
+
+	@Test
+	public void testAcceptHelloContinues() {
+		// GIVEN
+		// WHEN
+		final Result response = underTest.accept("HELLO 10 20");
+		// THEN
+		assertEquals(response, Result.CONTINUE);
+	}
 }
