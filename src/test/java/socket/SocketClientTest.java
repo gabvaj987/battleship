@@ -6,7 +6,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import player.Client;
-import player.Result;
+import player.result.Answer;
+import player.result.Result;
 
 public class SocketClientTest {
 	private Client underTest;
@@ -31,6 +32,6 @@ public class SocketClientTest {
 		// WHEN
 		final Result response = underTest.accept("HELLO 10 20");
 		// THEN
-		assertEquals(response, Result.CONTINUE);
+		assertEquals(response, new Answer("FIRE"));
 	}
 }

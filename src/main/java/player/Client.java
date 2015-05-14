@@ -1,16 +1,21 @@
 package player;
 
-public class Client extends Player{
+import player.result.Answer;
+import player.result.Result;
 
-	public Result accept(String command) {
+public class Client extends Player {
+
+	public Result accept(final String command) {
 		Result ret = null;
-    	if(command.startsWith("ERROR")){
-    		ret = Result.TERMINATE;
-    	} else if (command.startsWith("HELLO")){
-    		ret = Result.CONTINUE;
-    	} else {
-    		throw new IllegalArgumentException();
-    	}
-    	return ret;
+		if (command.startsWith("ERROR")) {
+			ret = Result.TERMINATE;
+		} else if (command.startsWith("YOU WON")) {
+			ret = Result.TERMINATE;
+		} else if (command.startsWith("HELLO")) {
+			ret = new Answer("FIRE");
+		} else {
+			throw new IllegalArgumentException();
+		}
+		return ret;
 	}
 }

@@ -5,15 +5,16 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import player.Result;
 import player.Server;
+import player.result.Answer;
+import player.result.Result;
 
 public class SocketServerTest {
 	private Server underTest;
 
 	@BeforeMethod
 	public void init() {
-		underTest = new Server();
+		underTest = new Server(10, 20);
 	}
 
 	@Test
@@ -31,6 +32,6 @@ public class SocketServerTest {
 		// WHEN
 		final Result response = underTest.accept("FIRE 5 10");
 		// THEN
-		assertEquals(response, Result.CONTINUE);
+		assertEquals(response, new Answer("YOU WON"));
 	}
 }
