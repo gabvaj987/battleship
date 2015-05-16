@@ -22,6 +22,32 @@ public class SocketClientRunner extends SocketRunner {
 		this.port = port;
 	}
 
+	private void run() throws IOException, UnknownHostException {
+		try (Socket socket = new Socket(host, port);
+				PrintWriter pr = new PrintWriter(socket.getOutputStream());
+				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+			Result result;
+			String readLine = br.readLine();
+			System.out.println("received: " + readLine);
+			try {
+				result = client.accept(readLine);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("illegal command", e);
+			}
+			while (result instanceof Answer) {
+				pr.println(((Answer) result).getCommand());
+				pr.flush();
+				readLine = br.readLine();
+				System.out.println("received:" + readLine);
+				try {
+					result = client.accept(readLine);
+				} catch (IllegalArgumentException e) {
+					throw new RuntimeException("illegal command", e);
+				}
+			}
+		}
+	}
+
 	public static void main(final String[] args) throws IOException {
 		if (args.length != 2) {
 			System.out.println("wrong number of parameters. Should be: <host> <port>");
@@ -36,23 +62,5 @@ public class SocketClientRunner extends SocketRunner {
 			throw new IllegalArgumentException(nfe);
 		}
 		new SocketClientRunner(new Client(), host, port).run();
-	}
-
-	private void run() throws IOException, UnknownHostException {
-		try (Socket socket = new Socket(host, port);
-				PrintWriter pr = new PrintWriter(socket.getOutputStream());
-				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-			Result result;
-			String readLine = br.readLine();
-			result = client.accept(readLine);
-
-			while (result instanceof Answer) {
-				readLine = br.readLine();
-				result = client.accept(readLine);
-				pr.println(readLine);
-				pr.flush();
-				System.out.println("client received:" + readLine);
-			}
-		}
 	}
 }

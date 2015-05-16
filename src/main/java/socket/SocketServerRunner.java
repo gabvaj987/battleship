@@ -27,32 +27,38 @@ public class SocketServerRunner {
 	public void run() throws IOException {
 		try (final ServerSocket serverSocket = new ServerSocket(port);
 				final Socket socket = serverSocket.accept();
-				final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				final BufferedReader reader = new BufferedReader(
+						new InputStreamReader(socket.getInputStream()));
 				final PrintWriter pr = new PrintWriter(socket.getOutputStream())) {
 			String readLine;
 			Result result = null;
 			final Answer hello = socketServer.sayHello();
 			pr.println(hello.getCommand());
 			pr.flush();
+			System.out.println("sent hello, waiting for client's response");
 			readLine = reader.readLine();
-			System.out.println("server received:" + readLine);
+			System.out.println("received:" + readLine);
 			result = socketServer.accept(readLine);
 
 			while (result instanceof Answer) {
 				pr.println(((Answer) result).getCommand());
 				pr.flush();
 				readLine = reader.readLine();
-				System.out.println("server received:" + readLine);
-				result = socketServer.accept(readLine);
+				System.out.println("received:" + readLine);
+				try {
+					result = socketServer.accept(readLine);
+				} catch (final IllegalArgumentException e) {
+					throw new RuntimeException("server stops: wrong command received",e);
+				}
 			}
-			System.out.println("server stops normally");
-		} catch (final IllegalArgumentException e) {
-			System.out.println("server stops: wrong command received");
 		}
+		System.out.println("server stops normally");
 	}
+
 	public static void main(final String[] args) throws IOException {
 		if (args.length != 3) {
-			System.out.println("wrong number of parameters. Should be: <port> <width> <height>");
+			System.out
+					.println("wrong number of parameters. Should be: <port> <width> <height>");
 			throw new IllegalArgumentException("wrong number of parameters");
 		}
 		Integer port;
@@ -76,7 +82,6 @@ public class SocketServerRunner {
 			System.out.println("height number cannot be parsed");
 			throw new IllegalArgumentException(nfe);
 		}
-		final Server socketServer = new Server(width, height);
-		new SocketServerRunner(socketServer, port).run();
+		new SocketServerRunner(new Server(width, height), port).run();
 	}
 }

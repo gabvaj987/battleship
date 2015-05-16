@@ -19,7 +19,7 @@ public class Server extends Player {
 
 	public Result accept(final String command) {
 		Result ret = null;
-		if (checkInsensitive(command, ERROR)) {
+		if (command == null || checkInsensitive(command, ERROR)) {
 			ret = Result.TERMINATE;
 		} else if (checkInsensitive(command, FIRE) || checkInsensitive(command, HELLO)) {
 			ret = new Answer("YOU WON");
