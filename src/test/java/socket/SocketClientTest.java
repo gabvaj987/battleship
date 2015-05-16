@@ -6,11 +6,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import player.Client;
+import player.Player;
 import player.result.Answer;
 import player.result.Result;
 
 public class SocketClientTest {
-	private Client underTest;
+	private Player underTest;
 
 	@BeforeMethod
 	public void init() {

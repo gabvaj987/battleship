@@ -8,16 +8,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import player.Client;
-import player.result.Answer;
-import player.result.Result;
 
-public class SocketClientRunner extends SocketRunner {
-	private final Client client;
+public class SocketClientRunner extends SocketRunner<Client> {
 	private final String host;
 	private final Integer port;
 
 	public SocketClientRunner(final Client client, final String host, final Integer port) {
-		this.client = client;
+		super(client);
 		this.host = host;
 		this.port = port;
 	}
@@ -26,26 +23,9 @@ public class SocketClientRunner extends SocketRunner {
 		try (Socket socket = new Socket(host, port);
 				PrintWriter pr = new PrintWriter(socket.getOutputStream());
 				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-			Result result;
-			String readLine = br.readLine();
-			System.out.println("received: " + readLine);
-			try {
-				result = client.accept(readLine);
-			} catch (IllegalArgumentException e) {
-				throw new RuntimeException("illegal command", e);
-			}
-			while (result instanceof Answer) {
-				pr.println(((Answer) result).getCommand());
-				pr.flush();
-				readLine = br.readLine();
-				System.out.println("received:" + readLine);
-				try {
-					result = client.accept(readLine);
-				} catch (IllegalArgumentException e) {
-					throw new RuntimeException("illegal command", e);
-				}
-			}
+			play(pr, br);
 		}
+		System.out.println("client stops normally");
 	}
 
 	public static void main(final String[] args) throws IOException {

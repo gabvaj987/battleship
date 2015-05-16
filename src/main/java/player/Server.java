@@ -1,7 +1,6 @@
 package player;
 
 import player.result.Answer;
-import player.result.Result;
 
 /** Server implementation */
 public class Server extends Player {
@@ -15,22 +14,6 @@ public class Server extends Player {
 	public Server(final Integer width, final Integer height) {
 		this.width = width;
 		this.height = height;
-	}
-
-	public Result accept(final String command) {
-		Result ret = null;
-		if (command == null || checkInsensitive(command, ERROR)) {
-			ret = Result.TERMINATE;
-		} else if (checkInsensitive(command, FIRE) || checkInsensitive(command, HELLO)) {
-			ret = new Answer("YOU WON");
-		} else {
-			throw new IllegalArgumentException();
-		}
-		return ret;
-	}
-
-	private boolean checkInsensitive(final String command, final String fire) {
-		return command.toLowerCase().startsWith(fire);
 	}
 
 	public Answer sayHello() {

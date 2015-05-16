@@ -9,56 +9,37 @@ import java.net.Socket;
 
 import player.Server;
 import player.result.Answer;
-import player.result.Result;
 
 /**
  * Connects ServerSocket to business logic SocketServer
  */
-public class SocketServerRunner {
+public class SocketServerRunner extends SocketRunner<Server> {
 
-	private final Server socketServer;
 	private final Integer port;
 
-	public SocketServerRunner(final Server socketServer, final Integer port) {
-		this.socketServer = socketServer;
+	public SocketServerRunner(final Server server, final Integer port) {
+		super(server);
 		this.port = port;
 	}
 
 	public void run() throws IOException {
 		try (final ServerSocket serverSocket = new ServerSocket(port);
 				final Socket socket = serverSocket.accept();
-				final BufferedReader reader = new BufferedReader(
-						new InputStreamReader(socket.getInputStream()));
+				final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				final PrintWriter pr = new PrintWriter(socket.getOutputStream())) {
-			String readLine;
-			Result result = null;
-			final Answer hello = socketServer.sayHello();
-			pr.println(hello.getCommand());
+			final Answer result = getPlayer().sayHello();
+			final String greeting = result.getCommand();
+			pr.println(greeting);
 			pr.flush();
-			System.out.println("sent hello, waiting for client's response");
-			readLine = reader.readLine();
-			System.out.println("received:" + readLine);
-			result = socketServer.accept(readLine);
-
-			while (result instanceof Answer) {
-				pr.println(((Answer) result).getCommand());
-				pr.flush();
-				readLine = reader.readLine();
-				System.out.println("received:" + readLine);
-				try {
-					result = socketServer.accept(readLine);
-				} catch (final IllegalArgumentException e) {
-					throw new RuntimeException("server stops: wrong command received",e);
-				}
-			}
+			System.out.println("sent: " + greeting);
+			play(pr, reader);
 		}
 		System.out.println("server stops normally");
 	}
 
 	public static void main(final String[] args) throws IOException {
 		if (args.length != 3) {
-			System.out
-					.println("wrong number of parameters. Should be: <port> <width> <height>");
+			System.out.println("wrong number of parameters. Should be: <port> <width> <height>");
 			throw new IllegalArgumentException("wrong number of parameters");
 		}
 		Integer port;

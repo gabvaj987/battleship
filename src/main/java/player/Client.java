@@ -5,16 +5,11 @@ import player.result.Result;
 
 public class Client extends Player {
 
+	@Override
 	public Result accept(final String command) {
-		Result ret = null;
-		if (command.startsWith("ERROR")) {
-			ret = Result.TERMINATE;
-		} else if (command.startsWith("YOU WON")) {
-			ret = Result.TERMINATE;
-		} else if (command.startsWith("HELLO")) {
+		Result ret = super.accept(command);
+		if (command != null && command.startsWith("HELLO")) {
 			ret = new Answer("FIRE");
-		} else {
-			throw new IllegalArgumentException();
 		}
 		return ret;
 	}
