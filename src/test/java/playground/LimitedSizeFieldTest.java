@@ -1,4 +1,5 @@
 package playground;
+
 import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -7,10 +8,6 @@ import java.util.List;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import playground.Field;
-import playground.LimitedSizeField;
-import playground.Position;
-import playground.PositionNotAvailableException;
 import ship.ShipShape;
 
 public class LimitedSizeFieldTest {
@@ -21,11 +18,11 @@ public class LimitedSizeFieldTest {
 	@BeforeMethod
 	public void setUp() {
 		underTest = new LimitedSizeField(FIELD_SIZE, FIELD_SIZE);
-		List<Position> onePoint = new ArrayList<>();
+		final List<Position> onePoint = new ArrayList<>();
 		onePoint.add(new Position(0, 0));
 		one = new ShipShape(onePoint);
 
-		List<Position> tetrisPoints = new ArrayList<>();
+		final List<Position> tetrisPoints = new ArrayList<>();
 		tetrisPoints.add(new Position(0, 1));
 		tetrisPoints.add(new Position(1, 1));
 		tetrisPoints.add(new Position(1, 0));
@@ -48,7 +45,7 @@ public class LimitedSizeFieldTest {
 		// GIVEN
 		underTest.putShip(one, new Position(1, 1));
 		// WHEN
-		Boolean isHit = underTest.fire(new Position(1, 1));
+		final Boolean isHit = underTest.fire(new Position(1, 1));
 		// THEN
 		assertEquals(isHit, Boolean.TRUE);
 	}
@@ -58,7 +55,7 @@ public class LimitedSizeFieldTest {
 		// GIVEN
 		underTest.putShip(tetris, new Position(1, 1));
 		// WHEN
-		Boolean isHit = underTest.fire(new Position(1, 1));
+		final Boolean isHit = underTest.fire(new Position(1, 1));
 		// THEN
 		assertEquals(isHit, Boolean.FALSE);
 	}
@@ -76,7 +73,7 @@ public class LimitedSizeFieldTest {
 	public void testShapeFitsShouldReturnFalseForTetrisInTheBottomLeftCorner() {
 		// GIVEN
 		// WHEN
-		Boolean fits = underTest.shipFits(tetris, new Position(0, 9));
+		final Boolean fits = underTest.shipFits(tetris, new Position(0, 9));
 		// THEN
 		assertEquals(fits, Boolean.FALSE);
 	}

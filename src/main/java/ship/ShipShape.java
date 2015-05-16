@@ -8,7 +8,7 @@ import playground.Position;
 public class ShipShape {
 	private final List<Position> positions;
 
-	public ShipShape(List<Position> positions) {
+	public ShipShape(final List<Position> positions) {
 		this.positions = new ArrayList<>(positions);
 	}
 

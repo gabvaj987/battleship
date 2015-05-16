@@ -22,12 +22,15 @@ public class SocketServerRunner extends SocketRunner<Server> {
 		this.port = port;
 	}
 
-	public void run() throws IOException {
+	@Override
+	protected void run() throws IOException {
 		try (final ServerSocket serverSocket = new ServerSocket(port);
 				final Socket socket = serverSocket.accept();
 				final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				final PrintWriter pr = new PrintWriter(socket.getOutputStream())) {
-			final Answer result = getPlayer().sayHello();
+			final Server player = getPlayer();
+			player.place();
+			final Answer result = player.sayHello();
 			final String greeting = result.getCommand();
 			pr.println(greeting);
 			pr.flush();

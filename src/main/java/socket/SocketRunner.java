@@ -16,6 +16,8 @@ public abstract class SocketRunner<T extends Player> {
 		this.player = player;
 	}
 
+	protected abstract void run() throws IOException;
+
 	protected void play(final PrintWriter pr, final BufferedReader br) throws IOException {
 		String readLine = br.readLine();
 		System.out.println("received:" + readLine);

@@ -1,20 +1,21 @@
-package socket;
+package player;
 
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import player.Server;
 import player.result.Answer;
 import player.result.Result;
 
-public class SocketServerTest {
-	private Server underTest;
+public class SocketClientTest {
+	private Player underTest;
 
 	@BeforeMethod
 	public void init() {
-		underTest = new Server(10, 20);
+		underTest = new Client();
+		underTest.setWidth(20);
+		underTest.setHeight(40);
 	}
 
 	@Test
@@ -26,12 +27,12 @@ public class SocketServerTest {
 		assertEquals(response, Result.TERMINATE);
 	}
 
-	@Test
-	public void testAcceptFireContinues() {
+	@Test(enabled = false)
+	public void testAcceptHelloContinues() {
 		// GIVEN
 		// WHEN
-		final Result response = underTest.accept("FIRE 5 10");
+		final Result response = underTest.accept("HELLO 10 20");
 		// THEN
-		assertEquals(response, new Answer("YOU WON"));
+		assertEquals(response, new Answer("FIRE"));
 	}
 }

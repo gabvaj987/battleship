@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import player.Client;
 
@@ -19,7 +18,8 @@ public class SocketClientRunner extends SocketRunner<Client> {
 		this.port = port;
 	}
 
-	private void run() throws IOException, UnknownHostException {
+	@Override
+	protected void run() throws IOException {
 		try (Socket socket = new Socket(host, port);
 				PrintWriter pr = new PrintWriter(socket.getOutputStream());
 				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
