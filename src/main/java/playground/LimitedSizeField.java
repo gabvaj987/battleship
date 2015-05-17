@@ -2,10 +2,13 @@ package playground;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import ship.ShipHitLeft;
 import ship.ShipShape;
 
 /**
@@ -19,6 +22,7 @@ public class LimitedSizeField implements Field {
 	private final Set<Position> placesUsed = new HashSet<>();
 	private final Set<Position> placesHit = new HashSet<>();
 	private final Set<Position> placesFired = new HashSet<>();
+	private final Map<Position, ShipHitLeft> shipHitLeft = new HashMap<>();
 
 	@Override
 	public Integer getXSize() {
