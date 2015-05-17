@@ -3,17 +3,17 @@ package playground;
 public class Position {
 	private final int x, y;
 
-	public Position(int x, int y) {
+	public Position(final int x, final int y) {
 		super();
 		this.x = x;
 		this.y = y;
 	}
 
-	public Position add(Position other) {
+	public Position add(final Position other) {
 		return new Position(x + other.getX(), y + other.getY());
 	}
 
-	public Position subtract(Position other) {
+	public Position subtract(final Position other) {
 		return new Position(x - other.getX(), y - other.getY());
 	}
 
@@ -27,7 +27,7 @@ public class Position {
 
 	@Override
 	public String toString() {
-		return "Position [x=" + x + ", y=" + y + "]";
+		return "{x=" + x + ", y=" + y + "}";
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class Position {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -50,7 +50,7 @@ public class Position {
 		if (!(obj instanceof Position)) {
 			return false;
 		}
-		Position other = (Position) obj;
+		final Position other = (Position) obj;
 		if (x != other.x) {
 			return false;
 		}

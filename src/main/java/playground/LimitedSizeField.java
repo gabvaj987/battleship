@@ -19,20 +19,11 @@ import ship.ShipShape;
  */
 public class LimitedSizeField implements Field {
 	private final Integer xSize, ySize;
-	private final Set<Position> placesUsed = new HashSet<>();
-	private final Set<Position> placesHit = new HashSet<>();
-	private final Set<Position> placesFired = new HashSet<>();
-	private final Map<Position, ShipHitLeft> shipsHitLeft = new HashMap<>();
-
-	@Override
-	public Integer getXSize() {
-		return xSize;
-	}
-
-	@Override
-	public Integer getYSize() {
-		return ySize;
-	}
+	private final Set<Position> shipPositions = new HashSet<>();
+	private final Set<Position> hitPositions = new HashSet<>();
+	private final Set<Position> firedPositions = new HashSet<>();
+	private final Map<Position, ShipHitLeft> shipsHitsLeft = new HashMap<>();
+	private int hitsLeft;
 
 	/**
 	 * @param xSize
@@ -46,14 +37,26 @@ public class LimitedSizeField implements Field {
 	}
 
 	@Override
+	public Integer getXSize() {
+		return xSize;
+	}
+
+	@Override
+	public Integer getYSize() {
+		return ySize;
+	}
+
+	@Override
 	public FireResult fire(final Position pos) throws IllegalArgumentException {
 		validatePosition(pos);
 		final FireResult ret;
-		if (placesFired.contains(pos)) {
-			ret = FireResult.ALREADY_TRIED;
-		} else if (placesUsed.contains(pos)) {
-			placesHit.add(pos);
-			if (shipsHitLeft.get(pos).decreaseAndCheck()) {
+		if (firedPositions.contains(pos)) {
+			ret = FireResult.ERROR;
+		} else if (shipPositions.contains(pos)) {
+			hitPositions.add(pos);
+			if (--hitsLeft == 0) {
+				ret = FireResult.YOU_WON;
+			} else if (shipsHitsLeft.get(pos).decreaseAndCheck()) {
 				ret = FireResult.SUNK;
 			} else {
 				ret = FireResult.HIT;
@@ -61,7 +64,7 @@ public class LimitedSizeField implements Field {
 		} else {
 			ret = FireResult.MISS;
 		}
-		placesFired.add(pos);
+		firedPositions.add(pos);
 		return ret;
 	}
 
@@ -72,12 +75,13 @@ public class LimitedSizeField implements Field {
 		for (final Position relativePosition : shape.getPositions()) {
 			final Position absolutePosition = pos.add(relativePosition);
 			boolean success = false;
-			success = placesUsed.add(absolutePosition);
+			success = shipPositions.add(absolutePosition);
 			if (success == false) {
 				throw new PositionNotAvailableException(pos);
 			} else {
 				shipHitLeft.increase();
-				shipsHitLeft.put(absolutePosition, shipHitLeft);
+				shipsHitsLeft.put(absolutePosition, shipHitLeft);
+				hitsLeft++;
 			}
 		}
 	}
@@ -86,7 +90,7 @@ public class LimitedSizeField implements Field {
 		final Collection<Position> neighbours = getNeighbours(absolutePosition);
 		boolean enabled = true;
 		for (final Position neighbour : neighbours) {
-			if (placesUsed.contains(neighbour)) {
+			if (shipPositions.contains(neighbour)) {
 				enabled = false;
 			}
 		}
@@ -122,7 +126,7 @@ public class LimitedSizeField implements Field {
 		final List<Position> shapePositions = shape.getPositions();
 		for (final Position shapePosition : shapePositions) {
 			final Position wantedPosition = pos.add(shapePosition);
-			if (placesUsed.contains(wantedPosition) || isOutside(wantedPosition) || !isEnabled(wantedPosition)) {
+			if (shipPositions.contains(wantedPosition) || isOutside(wantedPosition) || !isEnabled(wantedPosition)) {
 				fits = false;
 			}
 		}
@@ -135,9 +139,9 @@ public class LimitedSizeField implements Field {
 		for (int j = 0; j < getYSize(); j++) {
 			for (int i = 0; i < getXSize(); i++) {
 				final Position currentPosition = new Position(i, j);
-				if (placesHit.contains(currentPosition)) {
+				if (hitPositions.contains(currentPosition)) {
 					sb.append("* ");
-				} else if (placesUsed.contains(currentPosition)) {
+				} else if (shipPositions.contains(currentPosition)) {
 					sb.append("o ");
 				} else {
 					sb.append(". ");

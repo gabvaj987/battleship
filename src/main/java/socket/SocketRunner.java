@@ -22,18 +22,21 @@ public abstract class SocketRunner<T extends Player> {
 		String readLine = br.readLine();
 		System.out.println("received:" + readLine);
 		Result result = player.accept(readLine);
-		while (result instanceof Answer) {
-			final Answer answer = (Answer) result;
-			final String answerCommand = answer.getCommand();
-			pr.println(answerCommand);
-			pr.flush();
-			System.out.println("sent:" + answerCommand);
-			if (answer.isLast) {
-				break;
+		while (result instanceof Answer || !result.isLast()) {
+			if (result instanceof Answer) {
+				for (final String command : ((Answer) result).getCommands()) {
+					pr.println(command);
+					System.out.println("sent:" + command);
+				}
+				pr.flush();
 			}
-			readLine = br.readLine();
-			System.out.println("received:" + readLine);
-			result = player.accept(readLine);
+			if (result.isLast()) {
+				break;
+			} else {
+				readLine = br.readLine();
+				System.out.println("received:" + readLine);
+				result = player.accept(readLine);
+			}
 		}
 	}
 

@@ -14,9 +14,9 @@ public class Client extends Player {
 			setWidth(size.getX());
 			setHeight(size.getY());
 			place();
-			final Position attempt = getAvailable();
+			final Position attempt = getOtherField().fire();
 			setCurrentAttempt(attempt);
-			ret = new Answer("FIRE " + 0 + " " + 0);
+			ret = new Answer("FIRE " + attempt.getX() + " " + attempt.getY());
 		} else {
 			ret = super.accept(command);
 		}

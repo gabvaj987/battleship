@@ -8,7 +8,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import player.Server;
-import player.result.Answer;
 
 /**
  * Connects ServerSocket to business logic SocketServer
@@ -30,8 +29,7 @@ public class SocketServerRunner extends SocketRunner<Server> {
 				final PrintWriter pr = new PrintWriter(socket.getOutputStream())) {
 			final Server player = getPlayer();
 			player.place();
-			final Answer result = player.sayHello();
-			final String greeting = result.getCommand();
+			String greeting = player.sayHello();
 			pr.println(greeting);
 			pr.flush();
 			System.out.println("sent: " + greeting);

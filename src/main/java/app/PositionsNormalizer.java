@@ -14,4 +14,12 @@ public class PositionsNormalizer {
 		}
 		return normalPositions;
 	}
+
+	public List<Position> add(final List<Position> positions, final Position offset) {
+		final List<Position> offsetPositions = new ArrayList<>();
+		for (final Position position : positions) {
+			offsetPositions.add(position.add(offset));
+		}
+		return offsetPositions;
+	}
 }

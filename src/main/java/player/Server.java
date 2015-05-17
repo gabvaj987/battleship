@@ -1,6 +1,5 @@
 package player;
 
-import player.result.Answer;
 
 /** Server implementation */
 public class Server extends Player {
@@ -13,7 +12,7 @@ public class Server extends Player {
 		super(width, height);
 	}
 
-	public Answer sayHello() {
-		return new Answer("HELLO " + getWidth() + " " + getHeight());
+	public String sayHello() {
+		return "HELLO " + getWidth() + " " + getHeight();
 	}
 }

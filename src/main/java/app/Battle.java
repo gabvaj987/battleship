@@ -27,7 +27,6 @@ public class Battle {
 		System.out.println(field);
 
 		// hit ships
-		final boolean hit;
 		for (int i = 0; i < SIZE / 3; i++) {
 			for (int j = 0; j < SIZE; j++) {
 				final Position pos = new Position(i, j);

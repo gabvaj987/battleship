@@ -1,6 +1,5 @@
 package player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import player.result.Answer;
@@ -9,9 +8,8 @@ import playground.Field;
 import playground.FireResult;
 import playground.LimitedSizeField;
 import playground.Position;
+import playground.SearchField;
 import ship.ShipFleet;
-import ship.ShipShape;
-import app.PositionsNormalizer;
 import app.ShipLoader;
 import app.ShipPositioner;
 
@@ -19,10 +17,8 @@ public abstract class Player {
 	private Integer width;
 	private Integer height;
 	private Position currentAttempt;
-	private final List<Position> orphanHits = new ArrayList<>();
-	private final List<Position> misses = new ArrayList<>();
-	private Field myField, otherField;
-	private final PositionsNormalizer normalizer = new PositionsNormalizer();
+	private Field myField;
+	private SearchField otherField;
 
 	public Player() {
 
@@ -33,53 +29,59 @@ public abstract class Player {
 		this.height = height;
 	}
 
-	public Result accept(final String command) {
+	private void checkInitialized() {
 		if (width == null || height == null) {
 			throw new IllegalStateException("width and heigth have to be initialized");
 		}
-		final boolean opponentAttempted;
+	}
+
+	public Result accept(final String command) {
+		checkInitialized();
 		Result ret = null;
 		if (command == null) {
-			ret = new Answer("ERROR command expected", true);
+			ret = new Answer(true, "ERROR command cannot be null");
 		} else if (command.startsWith("FIRE")) {
-			final Position attempt = getAvailable();
-			handleOpponentAttempt(command);
+			currentAttempt = otherField.fire();
+			ret = createAnswer(handleOpponentAttempt(command), currentAttempt);
 		} else if (command.startsWith("MISS")) {
-			handleOpponentAttempt(command);
-			final Position attempt = getAvailable();
-			misses.add(currentAttempt);
+			currentAttempt = otherField.missed(currentAttempt);
+			ret = createAnswer(handleOpponentAttempt(command), currentAttempt);
 		} else if (command.startsWith("HIT")) {
-			handleOpponentAttempt(command);
-			orphanHits.add(getCurrentAttempt());
-			final Position attempt = getAvailable();
-			ret = new Answer("FIRE " + attempt.getX() + " " + attempt.getY());
+			currentAttempt = otherField.hit(currentAttempt);
+			ret = createAnswer(handleOpponentAttempt(command), currentAttempt);
 		} else if (command.startsWith("SUNK")) {
-			handleOpponentAttempt(command);
-			handleSunk();
-		} else if (command.startsWith("YOU WON")) {
-			ret = Result.TERMINATE;
+			currentAttempt = otherField.sunk(currentAttempt);
+			ret = createAnswer(handleOpponentAttempt(command), currentAttempt);
 		} else if (command.startsWith("ERROR")) {
-			ret = Result.TERMINATE;
+			ret = new Result();
+		} else if (command.startsWith("YOU WON")) {
+			ret = new Result(true);
 		} else {
-			ret = new Answer("ERROR command not recognized", true);
+			ret = new Answer(true, "ERROR command not recognized");
 		}
+		System.out.println(myField);
 		return ret;
 	}
 
-	private void handleSunk() {
-		orphanHits.add(getCurrentAttempt());
-		otherField.putShip(new ShipShape(normalizer.normalize(orphanHits)), orphanHits.get(0));
-		orphanHits.clear();
+	private Answer createAnswer(final FireResult fireResult, final Position currentAttempt) {
+		if (fireResult == FireResult.ERROR) {
+			return new Answer(fireResult.getCommand(), "FIRE " + currentAttempt.getX() + " " + currentAttempt.getY());
+		} else if (fireResult == FireResult.YOU_WON) {
+			return new Answer(true, fireResult.getCommand());
+		} else {
+			return new Answer(fireResult.getCommand() + " " + currentAttempt.getX() + " " + currentAttempt.getY());
+		}
 	}
 
-	private void handleOpponentAttempt(final String command) {
+	private FireResult handleOpponentAttempt(final String command) {
 		final Position opponentAttempt = parsePosition(command);
-		final FireResult fireResult = myField.fire(opponentAttempt);
+		return myField.fire(opponentAttempt);
 	}
 
 	public void place() {
+		checkInitialized();
 		myField = new LimitedSizeField(width, height);
-		otherField = new LimitedSizeField(width, height);
+		otherField = new SearchField(width, height);
 		final ShipPositioner shipPositioner = new ShipPositioner(myField);
 
 		final ShipLoader shipLoader = new ShipLoader("/ships.txt");
@@ -87,12 +89,8 @@ public abstract class Player {
 
 		for (final ShipFleet shipFleet : loadFleets) {
 			shipPositioner.addShips(shipFleet);
+			otherField.addShips(shipFleet);
 		}
-	}
-
-	protected Position getAvailable() {
-		// TODO
-		return null;
 	}
 
 	protected static Position parsePosition(final String command) {
@@ -116,8 +114,8 @@ public abstract class Player {
 		this.height = height;
 	}
 
-	protected Position getCurrentAttempt() {
-		return currentAttempt;
+	protected SearchField getOtherField() {
+		return otherField;
 	}
 
 	protected void setCurrentAttempt(final Position currentAttempt) {

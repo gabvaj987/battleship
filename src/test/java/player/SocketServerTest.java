@@ -5,8 +5,6 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import player.Player;
-import player.Server;
 import player.result.Answer;
 import player.result.Result;
 
@@ -24,7 +22,7 @@ public class SocketServerTest {
 		// WHEN
 		final Result response = underTest.accept("ERROR You have already fired here");
 		// THEN
-		assertEquals(response, Result.TERMINATE);
+		assertEquals(response, new Result());
 	}
 
 	@Test(enabled = false)

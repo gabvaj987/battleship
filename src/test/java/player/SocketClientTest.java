@@ -1,6 +1,7 @@
 package player;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -24,7 +25,7 @@ public class SocketClientTest {
 		// WHEN
 		final Result response = underTest.accept("ERROR You have already fired here");
 		// THEN
-		assertEquals(response, Result.TERMINATE);
+		assertEquals(response, new Result());
 	}
 
 	@Test(enabled = false)
@@ -33,6 +34,7 @@ public class SocketClientTest {
 		// WHEN
 		final Result response = underTest.accept("HELLO 10 20");
 		// THEN
-		assertEquals(response, new Answer("FIRE"));
+		assertTrue(response instanceof Answer);
+		assertTrue(((Answer) response).getCommands().get(0).startsWith("FIRE"));
 	}
 }
