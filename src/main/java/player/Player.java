@@ -55,9 +55,7 @@ public abstract class Player {
 			ret = new Answer("FIRE " + attempt.getX() + " " + attempt.getY());
 		} else if (command.startsWith("SUNK")) {
 			handleOpponentAttempt(command);
-			orphanHits.add(getCurrentAttempt());
-			otherField.putShip(new ShipShape(normalizer.normalize(orphanHits)), orphanHits.get(0));
-			orphanHits.clear();
+			handleSunk();
 		} else if (command.startsWith("YOU WON")) {
 			ret = Result.TERMINATE;
 		} else if (command.startsWith("ERROR")) {
@@ -66,6 +64,12 @@ public abstract class Player {
 			ret = new Answer("ERROR command not recognized", true);
 		}
 		return ret;
+	}
+
+	private void handleSunk() {
+		orphanHits.add(getCurrentAttempt());
+		otherField.putShip(new ShipShape(normalizer.normalize(orphanHits)), orphanHits.get(0));
+		orphanHits.clear();
 	}
 
 	private void handleOpponentAttempt(final String command) {
