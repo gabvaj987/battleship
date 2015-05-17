@@ -41,18 +41,19 @@ public abstract class Player {
 		if (command == null) {
 			ret = new Answer(true, "ERROR command cannot be null");
 		} else if (command.startsWith("FIRE")) {
-			currentAttempt = otherField.fire();
+			currentAttempt = currentAttempt == null ? otherField.fire() : currentAttempt;
 			ret = createAnswer(handleOpponentAttempt(command), currentAttempt);
 		} else if (command.startsWith("MISS")) {
 			currentAttempt = otherField.missed(currentAttempt);
-			ret = createAnswer(handleOpponentAttempt(command), currentAttempt);
+			ret = new Result();
 		} else if (command.startsWith("HIT")) {
 			currentAttempt = otherField.hit(currentAttempt);
-			ret = createAnswer(handleOpponentAttempt(command), currentAttempt);
+			ret = new Result();
 		} else if (command.startsWith("SUNK")) {
 			currentAttempt = otherField.sunk(currentAttempt);
-			ret = createAnswer(handleOpponentAttempt(command), currentAttempt);
+			ret = new Result();
 		} else if (command.startsWith("ERROR")) {
+			currentAttempt = otherField.sunk(currentAttempt);
 			ret = new Result();
 		} else if (command.startsWith("YOU WON")) {
 			ret = new Result(true);
@@ -63,19 +64,17 @@ public abstract class Player {
 		return ret;
 	}
 
-	private Answer createAnswer(final FireResult fireResult, final Position currentAttempt) {
-		if (fireResult == FireResult.ERROR) {
-			return new Answer(fireResult.getCommand(), "FIRE " + currentAttempt.getX() + " " + currentAttempt.getY());
-		} else if (fireResult == FireResult.YOU_WON) {
-			return new Answer(true, fireResult.getCommand());
-		} else {
-			return new Answer(fireResult.getCommand() + " " + currentAttempt.getX() + " " + currentAttempt.getY());
-		}
-	}
-
 	private FireResult handleOpponentAttempt(final String command) {
 		final Position opponentAttempt = parsePosition(command);
 		return myField.fire(opponentAttempt);
+	}
+
+	private Answer createAnswer(final FireResult fireResult, final Position currentAttempt) {
+		if (fireResult == FireResult.YOU_WON) {
+			return new Answer(true, fireResult.getCommand());
+		} else {
+			return new Answer(fireResult.getCommand(), "FIRE " + currentAttempt.getX() + " " + currentAttempt.getY());
+		}
 	}
 
 	public void place() {

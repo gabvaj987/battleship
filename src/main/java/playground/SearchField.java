@@ -24,6 +24,7 @@ public class SearchField {
 	private final List<Position> orphanHits = new ArrayList<>();
 	private final Set<Position> visited = new HashSet<>();
 	private final List<ShipShape> left = new ArrayList<>();
+	private final Random random = new Random();;
 
 	public Position fire() {
 		return getAttempt();
@@ -66,8 +67,6 @@ public class SearchField {
 	}
 
 	private Position getAttempt() {
-		// TODO
-		final Random random = new Random();
 		return new Position(random.nextInt(width), random.nextInt(height));
 	}
 

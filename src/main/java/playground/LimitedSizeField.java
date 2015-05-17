@@ -143,6 +143,8 @@ public class LimitedSizeField implements Field {
 					sb.append("* ");
 				} else if (shipPositions.contains(currentPosition)) {
 					sb.append("o ");
+				} else if (firedPositions.contains(currentPosition)) {
+					sb.append(", ");
 				} else {
 					sb.append(". ");
 				}
