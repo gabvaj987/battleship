@@ -45,9 +45,9 @@ public class LimitedSizeFieldTest {
 		// GIVEN
 		underTest.putShip(one, new Position(1, 1));
 		// WHEN
-		final Boolean isHit = underTest.fire(new Position(1, 1));
+		final FireResult result = underTest.fire(new Position(1, 1));
 		// THEN
-		assertEquals(isHit, Boolean.TRUE);
+		assertEquals(result, FireResult.HIT);
 	}
 
 	@Test
@@ -55,9 +55,9 @@ public class LimitedSizeFieldTest {
 		// GIVEN
 		underTest.putShip(tetris, new Position(1, 1));
 		// WHEN
-		final Boolean isHit = underTest.fire(new Position(1, 1));
+		final FireResult result = underTest.fire(new Position(1, 1));
 		// THEN
-		assertEquals(isHit, Boolean.FALSE);
+		assertEquals(result, FireResult.MISS);
 	}
 
 	@Test(expectedExceptions = PositionNotAvailableException.class)

@@ -16,15 +16,10 @@ public class Client extends Player {
 			place();
 			final Position attempt = getAvailable();
 			setCurrentAttempt(attempt);
-			ret = new Answer("FIRE " + attempt.getX() + " " + attempt.getY());
+			ret = new Answer("FIRE " + 0 + " " + 0);
 		} else {
 			ret = super.accept(command);
 		}
 		return ret;
-	}
-
-	private static Position parsePosition(final String command) {
-		final String[] parameters = command.split(" ", 3);
-		return new Position(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
 	}
 }

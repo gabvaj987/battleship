@@ -18,6 +18,7 @@ public class LimitedSizeField implements Field {
 	private final Integer xSize, ySize;
 	private final Set<Position> placesUsed = new HashSet<>();
 	private final Set<Position> placesHit = new HashSet<>();
+	private final Set<Position> placesFired = new HashSet<>();
 
 	@Override
 	public Integer getXSize() {
@@ -30,29 +31,37 @@ public class LimitedSizeField implements Field {
 	}
 
 	/**
-	 * @param xSize the x size of the filed
-	 * @param ySize the y size of the field
+	 * @param xSize
+	 *            the x size of the filed
+	 * @param ySize
+	 *            the y size of the field
 	 */
-	public LimitedSizeField(Integer xSize, Integer ySize) {
+	public LimitedSizeField(final Integer xSize, final Integer ySize) {
 		this.xSize = xSize;
 		this.ySize = ySize;
 	}
 
 	@Override
-	public Boolean fire(Position pos) throws IllegalArgumentException {
+	public FireResult fire(final Position pos) throws IllegalArgumentException {
 		validatePosition(pos);
-		boolean hit = placesUsed.contains(pos);
-		if (hit == true) {
+		final FireResult ret;
+		if (placesFired.contains(pos)) {
+			ret = FireResult.ALREADY_TRIED;
+		} else if (placesUsed.contains(pos)) {
 			placesHit.add(pos);
+			ret = FireResult.HIT;
+		} else {
+			ret = FireResult.MISS;
 		}
-		return hit;
+		placesFired.add(pos);
+		return ret;
 	}
 
 	@Override
-	public void putShip(ShipShape shape, Position pos) throws IllegalArgumentException, PositionNotAvailableException {
+	public void putShip(final ShipShape shape, final Position pos) throws IllegalArgumentException, PositionNotAvailableException {
 		validatePosition(pos);
-		for (Position relativePosition : shape.getPositions()) {
-			Position absolutePosition = pos.add(relativePosition);
+		for (final Position relativePosition : shape.getPositions()) {
+			final Position absolutePosition = pos.add(relativePosition);
 			boolean success = false;
 			success = placesUsed.add(absolutePosition);
 			if (success == false) {
@@ -61,10 +70,10 @@ public class LimitedSizeField implements Field {
 		}
 	}
 
-	private boolean isEnabled(Position absolutePosition) {
-		Collection<Position> neighbours = getNeighbours(absolutePosition);
+	private boolean isEnabled(final Position absolutePosition) {
+		final Collection<Position> neighbours = getNeighbours(absolutePosition);
 		boolean enabled = true;
-		for (Position neighbour : neighbours) {
+		for (final Position neighbour : neighbours) {
 			if (placesUsed.contains(neighbour)) {
 				enabled = false;
 			}
@@ -72,8 +81,8 @@ public class LimitedSizeField implements Field {
 		return enabled;
 	}
 
-	private Collection<Position> getNeighbours(Position absolutePosition) {
-		ArrayList<Position> neighbours = new ArrayList<>();
+	private Collection<Position> getNeighbours(final Position absolutePosition) {
+		final ArrayList<Position> neighbours = new ArrayList<>();
 		neighbours.add(absolutePosition.add(new Position(-1, 0)));
 		neighbours.add(absolutePosition.add(new Position(1, 0)));
 		neighbours.add(absolutePosition.add(new Position(0, -1)));
@@ -83,24 +92,24 @@ public class LimitedSizeField implements Field {
 
 	// Throws an IllegalArgumentException if the provided position is pointing
 	// outside of the field area.
-	private void validatePosition(Position pos) throws IllegalArgumentException {
+	private void validatePosition(final Position pos) throws IllegalArgumentException {
 		if (isOutside(pos)) {
 			throw new IllegalArgumentException();
 		}
 	}
 
-	private boolean isOutside(Position pos) {
-		int posX = pos.getX();
-		int posY = pos.getY();
+	private boolean isOutside(final Position pos) {
+		final int posX = pos.getX();
+		final int posY = pos.getY();
 		return posX < 0 || posX >= xSize || posY < 0 || posY >= ySize;
 	}
 
 	@Override
-	public Boolean shipFits(ShipShape shape, Position pos) {
+	public Boolean shipFits(final ShipShape shape, final Position pos) {
 		boolean fits = true;
-		List<Position> shapePositions = shape.getPositions();
-		for (Position shapePosition : shapePositions) {
-			Position wantedPosition = pos.add(shapePosition);
+		final List<Position> shapePositions = shape.getPositions();
+		for (final Position shapePosition : shapePositions) {
+			final Position wantedPosition = pos.add(shapePosition);
 			if (placesUsed.contains(wantedPosition) || isOutside(wantedPosition) || !isEnabled(wantedPosition)) {
 				fits = false;
 			}
@@ -110,10 +119,10 @@ public class LimitedSizeField implements Field {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		for (int j = 0; j < getYSize(); j++) {
 			for (int i = 0; i < getXSize(); i++) {
-				Position currentPosition = new Position(i, j);
+				final Position currentPosition = new Position(i, j);
 				if (placesHit.contains(currentPosition)) {
 					sb.append("* ");
 				} else if (placesUsed.contains(currentPosition)) {
