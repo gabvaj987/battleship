@@ -3,8 +3,8 @@ package ship;
 public class ShipHitLeft {
 	private int count;
 
-	public ShipHitLeft(final int count) {
-		this.count = count;
+	public void increase() {
+		count++;
 	}
 
 	/**

@@ -22,7 +22,7 @@ public class LimitedSizeField implements Field {
 	private final Set<Position> placesUsed = new HashSet<>();
 	private final Set<Position> placesHit = new HashSet<>();
 	private final Set<Position> placesFired = new HashSet<>();
-	private final Map<Position, ShipHitLeft> shipHitLeft = new HashMap<>();
+	private final Map<Position, ShipHitLeft> shipsHitLeft = new HashMap<>();
 
 	@Override
 	public Integer getXSize() {
@@ -53,7 +53,11 @@ public class LimitedSizeField implements Field {
 			ret = FireResult.ALREADY_TRIED;
 		} else if (placesUsed.contains(pos)) {
 			placesHit.add(pos);
-			ret = FireResult.HIT;
+			if (shipsHitLeft.get(pos).decreaseAndCheck()) {
+				ret = FireResult.SUNK;
+			} else {
+				ret = FireResult.HIT;
+			}
 		} else {
 			ret = FireResult.MISS;
 		}
@@ -64,12 +68,16 @@ public class LimitedSizeField implements Field {
 	@Override
 	public void putShip(final ShipShape shape, final Position pos) throws IllegalArgumentException, PositionNotAvailableException {
 		validatePosition(pos);
+		final ShipHitLeft shipHitLeft = new ShipHitLeft();
 		for (final Position relativePosition : shape.getPositions()) {
 			final Position absolutePosition = pos.add(relativePosition);
 			boolean success = false;
 			success = placesUsed.add(absolutePosition);
 			if (success == false) {
 				throw new PositionNotAvailableException(pos);
+			} else {
+				shipHitLeft.increase();
+				shipsHitLeft.put(absolutePosition, shipHitLeft);
 			}
 		}
 	}

@@ -47,17 +47,27 @@ public class LimitedSizeFieldTest {
 		// WHEN
 		final FireResult result = underTest.fire(new Position(1, 1));
 		// THEN
-		assertEquals(result, FireResult.HIT);
+		assertEquals(result, FireResult.SUNK);
 	}
 
 	@Test
-	public void testFireShouldHitPreviouslyPlacedTetrisShip() {
+	public void testFireShouldMissHoleInTetrisShip() {
 		// GIVEN
 		underTest.putShip(tetris, new Position(1, 1));
 		// WHEN
 		final FireResult result = underTest.fire(new Position(1, 1));
 		// THEN
 		assertEquals(result, FireResult.MISS);
+	}
+
+	@Test
+	public void testFireShouldHitTetrisShip() {
+		// GIVEN
+		underTest.putShip(tetris, new Position(1, 1));
+		// WHEN
+		final FireResult result = underTest.fire(new Position(1, 2));
+		// THEN
+		assertEquals(result, FireResult.HIT);
 	}
 
 	@Test(expectedExceptions = PositionNotAvailableException.class)
