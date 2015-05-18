@@ -45,7 +45,7 @@ public class SearchField extends AbstractField {
 	public Position sunk(final Position currentAttempt) {
 		visited.add(currentAttempt);
 		orphanHits.add(currentAttempt);
-		boolean found = true;
+		boolean found = false;
 		for (final Iterator<ShipShape> shipIterator = left.iterator(); shipIterator.hasNext();) {
 			final List<Position> shipPositions = shipIterator.next().getPositions();
 			if (shipPositions.size() == orphanHits.size()) {
