@@ -1,7 +1,5 @@
 package playground;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,8 +15,7 @@ import ship.ShipShape;
  * 
  * @author vajda.gabor
  */
-public class LimitedSizeField implements Field {
-	private final Integer xSize, ySize;
+public class LimitedSizeField extends AbstractField implements Field {
 	private final Set<Position> shipPositions = new HashSet<>();
 	private final Set<Position> hitPositions = new HashSet<>();
 	private final Set<Position> firedPositions = new HashSet<>();
@@ -32,18 +29,7 @@ public class LimitedSizeField implements Field {
 	 *            the y size of the field
 	 */
 	public LimitedSizeField(final Integer xSize, final Integer ySize) {
-		this.xSize = xSize;
-		this.ySize = ySize;
-	}
-
-	@Override
-	public Integer getXSize() {
-		return xSize;
-	}
-
-	@Override
-	public Integer getYSize() {
-		return ySize;
+		super(xSize, ySize);
 	}
 
 	@Override
@@ -86,26 +72,6 @@ public class LimitedSizeField implements Field {
 		}
 	}
 
-	private boolean isEnabled(final Position absolutePosition) {
-		final Collection<Position> neighbours = getNeighbours(absolutePosition);
-		boolean enabled = true;
-		for (final Position neighbour : neighbours) {
-			if (shipPositions.contains(neighbour)) {
-				enabled = false;
-			}
-		}
-		return enabled;
-	}
-
-	private Collection<Position> getNeighbours(final Position absolutePosition) {
-		final ArrayList<Position> neighbours = new ArrayList<>();
-		neighbours.add(absolutePosition.add(new Position(-1, 0)));
-		neighbours.add(absolutePosition.add(new Position(1, 0)));
-		neighbours.add(absolutePosition.add(new Position(0, -1)));
-		neighbours.add(absolutePosition.add(new Position(0, 1)));
-		return neighbours;
-	}
-
 	// Throws an IllegalArgumentException if the provided position is pointing
 	// outside of the field area.
 	private void validatePosition(final Position pos) throws IllegalArgumentException {
@@ -114,19 +80,13 @@ public class LimitedSizeField implements Field {
 		}
 	}
 
-	private boolean isOutside(final Position pos) {
-		final int posX = pos.getX();
-		final int posY = pos.getY();
-		return posX < 0 || posX >= xSize || posY < 0 || posY >= ySize;
-	}
-
 	@Override
 	public Boolean shipFits(final ShipShape shape, final Position pos) {
 		boolean fits = true;
 		final List<Position> shapePositions = shape.getPositions();
 		for (final Position shapePosition : shapePositions) {
 			final Position wantedPosition = pos.add(shapePosition);
-			if (shipPositions.contains(wantedPosition) || isOutside(wantedPosition) || !isEnabled(wantedPosition)) {
+			if (shipPositions.contains(wantedPosition) || isOutside(wantedPosition) || isNeighboring(shipPositions, wantedPosition)) {
 				fits = false;
 			}
 		}

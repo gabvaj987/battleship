@@ -40,4 +40,9 @@ public class ShipShape {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "ShipShape [positions=" + positions + "]";
+	}
 }

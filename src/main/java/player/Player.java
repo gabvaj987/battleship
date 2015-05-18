@@ -53,7 +53,7 @@ public abstract class Player {
 			currentAttempt = otherField.sunk(currentAttempt);
 			ret = new Result();
 		} else if (command.startsWith("ERROR")) {
-			currentAttempt = otherField.sunk(currentAttempt);
+			currentAttempt = otherField.error(currentAttempt);
 			ret = new Result();
 		} else if (command.startsWith("YOU WON")) {
 			ret = new Result(true);
