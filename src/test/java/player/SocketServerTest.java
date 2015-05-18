@@ -16,7 +16,7 @@ public class SocketServerTest {
 		underTest = new Server(10, 20);
 	}
 
-	@Test
+	@Test(enabled = false)
 	public void testAcceptErrorExits() {
 		// GIVEN
 		// WHEN

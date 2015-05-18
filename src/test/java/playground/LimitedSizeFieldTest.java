@@ -47,7 +47,7 @@ public class LimitedSizeFieldTest {
 		// WHEN
 		final FireResult result = underTest.fire(new Position(1, 1));
 		// THEN
-		assertEquals(result, FireResult.SUNK);
+		assertEquals(result, FireResult.YOU_WON);
 	}
 
 	@Test

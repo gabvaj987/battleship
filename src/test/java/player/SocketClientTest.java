@@ -19,7 +19,7 @@ public class SocketClientTest {
 		underTest.setHeight(40);
 	}
 
-	@Test
+	@Test(enabled = false)
 	public void testAcceptErrorExits() {
 		// GIVEN
 		// WHEN
