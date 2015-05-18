@@ -151,6 +151,9 @@ public class SearchField extends AbstractField {
 				break;
 			}
 		}
+		if (attempt == null) {
+			System.out.println("cannot fire:\n" + toString());
+		}
 		return attempt;
 	}
 
@@ -159,5 +162,25 @@ public class SearchField extends AbstractField {
 		for (int i = 0; i < shipFleet.getCount(); i++) {
 			left.add(shipShape);
 		}
+	}
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("Fields:\n");
+		for (int j = 0; j < getYSize(); j++) {
+			for (int i = 0; i < getXSize(); i++) {
+				final Position currentPosition = new Position(i, j);
+				if (hits.contains(currentPosition)) {
+					sb.append("* ");
+				} else if (visited.contains(currentPosition)) {
+					sb.append(", ");
+				} else {
+					sb.append(". ");
+				}
+			}
+			sb.append("\n");
+		}
+		sb.append("\nShips left:\n");
+		sb.append(left);
+		return sb.toString();
 	}
 }

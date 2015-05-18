@@ -56,11 +56,12 @@ public abstract class Player {
 			currentAttempt = otherField.error(currentAttempt);
 			ret = new Result();
 		} else if (command.startsWith("YOU WON")) {
+			System.out.println(myField);
+			System.out.println("I won");
 			ret = new Result(true);
 		} else {
 			ret = new Answer(true, "ERROR command not recognized");
 		}
-		System.out.println(myField);
 		return ret;
 	}
 
@@ -71,6 +72,7 @@ public abstract class Player {
 
 	private Answer createAnswer(final FireResult fireResult, final Position currentAttempt) {
 		if (fireResult == FireResult.YOU_WON) {
+			System.out.println(otherField);
 			return new Answer(true, fireResult.getCommand());
 		} else {
 			return new Answer(fireResult.getCommand(), "FIRE " + currentAttempt.getX() + " " + currentAttempt.getY());
